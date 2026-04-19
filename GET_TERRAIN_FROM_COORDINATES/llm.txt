@@ -1,0 +1,13 @@
+PAYMENT:
+  NETWORK:
+  WALLET:
+  OPTION:
+    USDC:0.0001
+    ROG:0.000000001
+    ETH:0.000000000000001
+    MATIC:0.003
+
+Submit a GET request to this endpoint specifying coordinates of longitude, latitude and optionally elevation, and receive a terrain response. Know if the point is on the sand at the beach, in the water on the boat, on the road, or in the grass.
+Each submission should carry an onchain transaction ID verifying payment along with an unsigned and signed nonce by the payee wallet.
+
+?latitude={}&longitude={}&altitude={}&TX=0x1213123123123123123123123&nonce=54r8&signed_nonce=i93e9i230e9i20
