@@ -1,0 +1,1 @@
+Given a track (path that an object has traveled) it is possible to approximate its future anticipated course. Given a destination, the approximation can be more accurate. Given timestamps to track data, time to destination and waypoints may also be approximated.
