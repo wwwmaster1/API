@@ -1,0 +1,1 @@
+Reverse geocoding is the process of converting geographic coordinates (latitude/longitude) into a postal address or place name.
