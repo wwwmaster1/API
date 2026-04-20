@@ -1,1 +1,2 @@
 
+HEADING is the direction the nose of an object or person is pointing. Given two or more distinct successive points on a path, it is possible to approximate heading. When adding timestamps to the points it is possible to also approximate speed of travel.
