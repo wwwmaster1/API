@@ -1,0 +1,1 @@
+Specify network, source wallet, destination address, amount(min) and timeframe.
