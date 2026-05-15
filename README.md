@@ -21,9 +21,12 @@ The flow above allows you to prove you own the account in question and can make 
 10) You must make the payment in the exact `cost` amount, to the exact `payTo` address, on the proper `chainId` and pay the gas fees.
 11) The system will periodically check if payment has been made (from specified wallet in specified amount in specified token on specified chain) until the expiration time. If payment is detected, the `status` will change to `paid` and a `txHash` will be returned including the url where you can find the completed work.
 
-##TODO:
+## TODO:
 ### To prepay in advance:
 12) If the fee is a known or fixed `cost` to a known `payTo` address on a known `chainId`, you may pre-pay it and include the `txHash` value in the original request as confirmation of prepayment. The transaction must be in the latest block or an immediate predecessor.
+
+### To utilize a credit allocation:
+1X) 
 
 ### If payment is not detected:
 13) You may include the `txHash` value in a [POST] request to the `statusUrl` as confirmation of payment. The transaction must be in the latest block or an immediate predecessor and match the exact `payTo` address, on the proper `chainId`. If the `cost` amount is greater than expected or from a different `address` than expected, the job may still complete with some delay.
