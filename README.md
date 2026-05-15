@@ -6,16 +6,27 @@ A server offering many APIs needed for agentic operations, specifically on the L
 
 This server uses ETHAuth and Open402 specifications for access and payment (respectively). The flow is:
 
-1) submit your Ethereum Public Key (and optionally chain ID) to `[any API endpoint]/challenge` [GET]`?` `api=` `&chainid=`
-2) if your key is valid, the endpoint responds with a nonce value that you will sign with the private key for the aformentioned public key.
-3) submit your signed message to `[any API endpoint]/login` [POST] as `signature`
-4) if the signature is valid (and optionally: exists on network; holds token; in some amount;) then a JWT will be issued
-5) until expiration (typically 15 minutes) you may use the JWT as Bearer token in `[any API endpoint]/resource` [POST] as Authorization
+1) submit your Ethereum Address and an acceptable Chain ID to: [GET] `/challenge` `?` `address=` & `chainId=`
+2) the endpoint returns a `nonce` value in JSON that must be signed with the same credentials
+3) submit your signed message to [POST] `/login` in a JSON object as `signature` along with the unsigned `nonce`, original `address` and `chainId`
+4) the endpoint returns a time sensetive `token` value in JSON if the signature is valid
+6) until expiration (typically 15 minutes) you may use the JWT as `Bearer {token}` in `Authorization` header via [POST] to any of the API endpoints for authorization
+7) at this point the merchant may validate that the `Address` exists on the `chainId`... holds some token... in some amount
 
 The flow above allows you to prove you own the account in question and can make payment if required. Payments may be made on a per-request basis or deducted from an allocation, depending on the api.
 
 ### To make a one time payment:
-6) Submit a proper request to the API endpoint.
-7) If your request is missing anything, an error should specify the issue; otherwise, a request for payment may be specified (with wallet/network/amount data), and a request status URL should be specified. If the fee is a fixed amount, you may include a tx identifier as confirmation of prepayment, but only once.
-8) Until payment is made, the request status will reply with a "Pending Payment" message.
-9) Once payment is detected, the request status will reply with the full response.
+8) Submit a proper request to the API endpoint with the JWT as `Bearer {token}` in `Authorization` header via [POST].
+9) If your request is missing anything, an error should specify the issue; otherwise, a request for payment will be issued in JSON (with `payTo`/`chainId`/`cost`/`jobId`/`expiresIn` values) along with a request `statusUrl` to track progress.
+10) You must make the payment in the exact `cost` amount, to the exact `payTo` address, on the proper `chainId` and pay the gas fees.
+11) The system will periodically check if payment has been made (from specified wallet in specified amount in specified token on specified chain) until the expiration time. If payment is detected, the `status` will change to `paid` and a `txHash` will be returned including the url where you can find the completed work.
+
+##TODO:
+### To prepay in advance:
+12) If the fee is a known or fixed `cost` to a known `payTo` address on a known `chainId`, you may pre-pay it and include the `txHash` value in the original request as confirmation of prepayment. The transaction must be in the latest block or an immediate predecessor.
+
+### If payment is not detected:
+13) You may include the `txHash` value in a [POST] request to the `statusUrl` as confirmation of payment. The transaction must be in the latest block or an immediate predecessor and match the exact `payTo` address, on the proper `chainId`. If the `cost` amount is greater than expected or from a different `address` than expected, the job may still complete with some delay.
+
+### If an error in payment was made:
+14) If the job is not complete, a credit request can be submitted by [POST] to the `statusUrl` specifying the `txHash`, `creditRequestReason` and `contactEmailAddress`. This will queue a support ticket which will eventually get review.
